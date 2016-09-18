@@ -1,0 +1,154 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.mujinnong.model</groupId>
+	<artifactId>model_java</artifactId>
+
+	<name>model_java</name>
+	<packaging>jar</packaging>
+	<description>java implementation of xml model</description>
+
+	<parent>
+		<groupId>com.mujinnong.model</groupId>
+		<artifactId>modelGenerator</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+
+	<properties>
+		<java-version>1.6</java-version>
+		<code.empty.string>false</code.empty.string>
+		<code.generate.path>${project.basedir}/src/main/generated</code.generate.path>
+	</properties>
+	
+    <profiles>
+	    <!-- 上传model时需要用此profile，生存的model才会带有默认字符串 -->
+        <profile>
+            <id>deploye_model</id>
+            <properties>
+                <code.empty.string>true</code.empty.string>
+            </properties>
+        </profile>
+    </profiles>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.android</groupId>
+			<artifactId>spring-android-rest-template</artifactId>
+			<version>1.0.1.RELEASE</version>
+		</dependency>
+        <!-- gson for android -->
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.2.2</version>
+		</dependency>
+	</dependencies>
+	
+	<build>
+
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.2.1</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <source>${java-version}</source>
+                    <target>${java-version}</target>
+                </configuration>
+            </plugin>
+            
+            <!-- 编译生成的code -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.8</version>
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${code.generate.path}</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+            <!-- 清空生成的code -->
+			<plugin>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>2.5</version>
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>${code.generate.path}</directory>
+							<includes>
+								<include>**/*</include>
+							</includes>
+						</fileset>
+					</filesets>
+				</configuration>
+			</plugin>
+            <!-- code生成plugin -->
+			<plugin>
+				<groupId>com.mujinnong.model</groupId>
+				<artifactId>codeGenPlugin</artifactId>
+				<version>1.0.0-SNAPSHOT</version>
+				<executions>
+					<execution>
+						<id>generator_model</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>generator</goal>
+						</goals>
+					</execution>
+					<!-- 
+					<execution>
+                        <id>generator_model_deploy</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>generator</goal>
+                        </goals>
+                        <configuration>
+                            <stringPropertyDefaultEmpty>true</stringPropertyDefaultEmpty>
+                        </configuration>
+					</execution>
+					 -->
+				</executions>
+				<configuration>
+					<!-- <modelPathDir>../model/src/main/java/com/lecai/core/model</modelPathDir> -->
+				    <!-- <modelPathDir>../model/src/main/java/com/jessieray/api/model</modelPathDir> -->
+					<!-- <modelPathDir>../model/src/main/java/com/cbh/api/model</modelPathDir>  -->
+					<!-- <modelPathDir>../model/src/main/java/com/mome/api/model</modelPathDir>  -->
+					<!-- <modelPathDir>../model/src/main/java/com/qmht/app/model</modelPathDir> -->
+					<!-- <modelPathDir>../model/src/main/java/com/mjn/api/model</modelPathDir> -->
+					<modelPathDir>../xmlModel/src/main/java/com/lecai/core/model</modelPathDir>
+					<templatePathDir>src/main/template</templatePathDir>
+					<targetPath>${code.generate.path}</targetPath>
+					<targetPackagePrefix>./com/netmodel/api</targetPackagePrefix>
+					<stringPropertyDefaultEmpty>${code.empty.string}</stringPropertyDefaultEmpty>
+				</configuration>
+			</plugin>
+
+		</plugins>
+
+	</build>
+</project>

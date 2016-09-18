@@ -1,0 +1,173 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <artifactId>modelGenerator</artifactId>
+        <groupId>com.mujinnong.model</groupId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>webapi</artifactId>
+    <packaging>war</packaging>
+    <name>webapi</name>
+    <url>http://maven.apache.org</url>
+
+    <properties>
+        <code.generate.path>${project.basedir}/src/main/generated</code.generate.path>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-mongodb</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-tx</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-beans</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-expression</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- @Inject -->
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+            <version>1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-servlet-api</artifactId>
+            <version>7.0.30</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.6</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <version>1.8.3</version>
+        </dependency>
+
+        <!--model_java-->
+        <dependency>
+            <groupId>com.mujinnong.model</groupId>
+            <artifactId>model_java</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.1</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>webapp</finalName>
+
+        <plugins>
+            <!-- 编译生成的code -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <id>add-source</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${code.generate.path}</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- 清空生成的code -->
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>2.5</version>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>${code.generate.path}</directory>
+                            <includes>
+                                <include>**/*</include>
+                            </includes>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
+            <!-- code生成plugin-->
+            <plugin>
+                <groupId>com.mujinnong.model</groupId>
+                <artifactId>codeGenPlugin</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+                <executions>
+                    <execution>
+                        <id>generate_service</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generator</goal>
+                        </goals>
+                        <configuration>
+                            <templatePathDir>./src/main/template/service</templatePathDir>
+                            <targetPackagePrefix>./com/qinglicai/webapp/service</targetPackagePrefix>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate_controller</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generator</goal>
+                        </goals>
+                        <configuration>
+                            <templatePathDir>./src/main/template/controller</templatePathDir>
+                            <targetPackagePrefix>./com/qinglicai/webapp/controller</targetPackagePrefix>
+                            <exportEnabled>true</exportEnabled>
+                        </configuration>
+                    </execution>
+                    <!--
+                    <execution>
+                        <id>generator_signHelper_singleoutput</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generator</goal>
+                        </goals>
+                        <configuration>
+                            <templatePathDir>./src/main/template_single_output</templatePathDir>
+                            <targetPackagePrefix>./helper</targetPackagePrefix>
+                            <singleOutput>true</singleOutput>
+                            <exportEnabled>true</exportEnabled>
+                        </configuration>
+                    </execution>
+                     -->
+                </executions>
+                <configuration>
+                    <modelPathDir>./../xmlModel/src/main/java/com/lecai/core/model</modelPathDir>
+                    <targetPath>${code.generate.path}</targetPath>
+                </configuration>
+            </plugin>
+        </plugins>
+
+    </build>
+</project>

@@ -1,0 +1,105 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.mujinnong.model</groupId>
+	<artifactId>model_ios</artifactId>
+
+	<name>model_ios</name>
+	<packaging>pom</packaging>
+	<description>ios implementation of xml model</description>
+
+	<parent>
+		<groupId>com.mujinnong.model</groupId>
+		<artifactId>modelGenerator</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+
+	<properties>
+		<code.generate.path>${project.basedir}/src/main/generated</code.generate.path>
+		<code.empty.string>true</code.empty.string>
+	</properties>
+
+	<build>
+
+		<plugins>
+
+            <!-- 编译生成的code -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.8</version>
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${code.generate.path}</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin> 
+            <!-- 清空生成的code -->
+			<plugin>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>2.5</version>
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>${code.generate.path}</directory>
+							<includes>
+								<include>**/*</include>
+							</includes>
+						</fileset>
+					</filesets>
+				</configuration>
+			</plugin>
+            <!-- code生成plugin -->
+			<plugin>
+				<groupId>com.mujinnong.model</groupId>
+				<artifactId>codeGenPlugin</artifactId>
+				<version>1.0.0-SNAPSHOT</version>
+				<executions>
+					<execution>
+						<id>generator_ios_model</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>generator</goal>
+						</goals>
+						<configuration>
+							<templatePathDir>src/main/template</templatePathDir>
+						</configuration>
+					</execution>
+					<execution>
+						<id>generator_ios_model_singleoutput</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>generator</goal>
+						</goals>
+						<configuration>
+							<templatePathDir>src/main/template_single_output</templatePathDir>
+							<singleOutput>true</singleOutput>
+						</configuration>
+					</execution>
+				</executions>
+				<configuration>
+					<!-- <modelPathDir>../model/src/main/java/com/jessieray/api/model</modelPathDir> -->
+					<!-- <modelPathDir>../model/src/main/java/com/mome/api/model</modelPathDir> -->
+					<!--<modelPathDir>../xmlModel/src/main/java/com/qmht/app/model</modelPathDir>-->
+					<modelPathDir>../xmlModel/src/main/java/com/installment/api/model</modelPathDir>
+					<templatePathDir>src/main/template</templatePathDir>
+					<targetPath>${code.generate.path}</targetPath>
+					<targetPackagePrefix>./com/netmodel/api</targetPackagePrefix>
+					<stringPropertyDefaultEmpty>${code.empty.string}</stringPropertyDefaultEmpty>
+				</configuration>
+			</plugin>
+
+		</plugins>
+
+	</build>
+
+</project>
